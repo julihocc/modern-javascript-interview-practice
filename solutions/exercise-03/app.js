@@ -1,6 +1,6 @@
 const intersect = (arr0, arr1) => {
     const intersection = []
-    for(num of arr0){
+    for(const num of arr0){
         if(arr1.includes(num)){
             intersection.push(num)
             let index = arr1.indexOf(num)
