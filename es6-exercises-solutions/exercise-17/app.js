@@ -11,7 +11,10 @@ candidate.printName = function (){
     return fullName
 }
 
-const info = document.querySelectorAll(".info")
+const info = document.getElementsByClassName("info")
 
-info[1].children[0].textContent = candidate.name.firstname
-info[1].children[1].textContent = candidate.printName()
+// info[1].children[0].textContent = candidate.name.firstname
+// info[1].children[1].textContent = candidate.printName()
+
+const candidateInfo = info[info.length - 1].firstChild
+candidateInfo.textContent = candidate.printName()
