@@ -12,9 +12,9 @@ const includesArray = (arr) => {
 
 const input = [1,2,3,[4,5,[6,7],10,[11,[12,13]]],8,9]
 
-console.log(includesArray(input))
+// console.log(includesArray(input))
 
-const flat = (array, result) => {
+const recursion = (array, result) => {
     for(let x of array){
         if(Array.isArray(x)){
             let flatten = flat(x, [])
@@ -28,4 +28,8 @@ const flat = (array, result) => {
     return result
 }
 
-console.log(flat(input, []))
+const flat = (array) => {
+    return recursion(array, [])
+}
+
+console.log(flat(input))
