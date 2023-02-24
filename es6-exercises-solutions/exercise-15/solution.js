@@ -1,15 +1,23 @@
-var foo = /** @class */ (function () {
-    function foo() {
+const foo = (function() {
+        function privateMethod() {
+            console.log('this is a private method')
+        }
+
+        return {
+            bar: function () {
+                console.log('this is a public method')
+            },
+            test: function (){
+                console.log('this is another public method')
+            }
+        }
     }
-    foo.prototype.bar = function () {
-        console.log("bar");
-    };
-    foo.prototype.test = function () {
-        console.log("test");
-    };
-    return foo;
-}());
-var f = new foo();
-f.bar();
-//# sourceMappingURL=solution.js.map
-f.test();
+)()
+
+foo.bar()
+foo.test()
+try {
+    foo.privateMethod()
+} catch (e) {
+    console.error("privateMethod is not accessible outside foo")
+}
