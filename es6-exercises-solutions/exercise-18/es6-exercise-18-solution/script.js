@@ -2,15 +2,37 @@ const table = document.querySelector('table');
 const tbody = document.querySelector('tbody');
 const numberID = document.querySelector('#numberID');
 
+window.addEventListener('load', () => {
+    const users = JSON.parse(localStorage.getItem('users'))||[];
+    console.log('users: '+JSON.stringify(users));
+    users.forEach(id => {
+        showUser(id);
+    });
+});
 numberID.addEventListener('keypress', function(event) {
     if(event.key === 'Enter') {
-        addUser(numberID.value);
-            }
+        const id = numberID.value;
+        console.log('id: '+id.constructor.name);
+        const users = JSON.parse(localStorage.getItem('users'))||[];
+        if (!users.includes(id)) {
+            users.push(id);
+            console.log('users: '+JSON.stringify(users));
+            localStorage.setItem('users', JSON.stringify(users));
+            showUser(id);
+        }
+        else {
+            alert(`User ${event.target.value} already exists`);
+            event.target.value = '';
+        }
+
+
+    }
 });
 
-async function addUser(id) {
+async function showUser(id) {
     const response = await fetch(`https://dummyjson.com/users/${id}`);
     console.log(response);
+
     if (response.ok && response.status === 200) {
         const data = await response.json();
         const name = data.firstName;
