@@ -1,12 +1,5 @@
 const fromRemove = (arr,...args) => {
-    const output = []
-    while(arr.length >0){
-        const first = arr.shift()
-        if(!args.includes(first)){
-            output.push(first)
-        }
-    }
-    return output
+    return arr.filter(item => !args.includes(item))
 }
 
 const arr = [1,2,3,4,1,2,3,4,5,6]
