@@ -4,8 +4,9 @@ const find = (arr) => {
         for (let j = i + 1; j < arr.length; j++) {
             let x = -arr[i] - arr[j];
             if (arr.includes(x)) {
-                let newTriple = new Set([arr[i], arr[j], x]);
-                output.add(newTriple);
+                let newTriple = [arr[i], arr[j], x];
+                newTriple.sort();
+                output.add(JSON.stringify(newTriple));
             }
         }
     }
