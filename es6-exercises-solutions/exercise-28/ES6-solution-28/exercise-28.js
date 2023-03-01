@@ -1,19 +1,14 @@
 async function getOne(url) {
   const response = await fetch(url);
-  const data = await response.json();
-  return data;
+  return await response.json();
 }
 
 const _async = {
     getAll: async function (urlArray, callback){
-        const output = {};
-        for(const index in urlArray){
-            const url = urlArray[index];
-            const data = await getOne(url);
-            // console.log(data);
-            output[index] = callback(data);
-        }
-        console.log(output);
+        const output = await Promise.all(urlArray.map(async (url) => {
+            return await getOne(url);
+        }));
+        return output.map(callback);
     }
 }
 
@@ -25,4 +20,5 @@ const callback = (data) => {
     return data.name;
 }
 
-_async.getAll(urlArray, callback);
+_async.getAll(urlArray, callback)
+    .then(data => console.log(data));
