@@ -3,7 +3,7 @@ function myLog() {
         bar: 'bar',
         foo: 'foo',
         prop: function () {
-            var self = this; // because prop is a property of X, this points to X and so self=this=X
+            const self = this; // because prop is a property of X, this points to X and so self=this=X
             console.log(self.bar); // thus self.bar = 'bar'
             console.log(this.foo); // and this.foo = 'foo'
             (function() { // now we invoke an IIFE
@@ -15,5 +15,5 @@ function myLog() {
         }
     };
 }
-var obj = myLog();
+const obj = myLog();
 obj.prop();
