@@ -11,6 +11,7 @@ class DateTime extends Date {
         this._prop = value
     }
 }
+
 console.log(DateTime)
 const dateTime = new DateTime()
 dateTime.prop = 0
