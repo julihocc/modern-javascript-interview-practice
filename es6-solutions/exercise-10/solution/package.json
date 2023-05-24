@@ -1,7 +1,7 @@
 {
-  "name": "exercise-10",
+  "name": "solution",
   "version": "1.0.0",
   "dependencies": {
-  },
-  "type": "module"
+    "axios": "^1.4.0"
+  }
 }
