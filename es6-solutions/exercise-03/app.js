@@ -5,7 +5,7 @@ const intersect = (arr0, arr1) => {
             intersection.push(num)
         }
     }
-    return Array.from(intersection)
+    return intersection
 }
 
 const arr0 = [2,3,5,3]
