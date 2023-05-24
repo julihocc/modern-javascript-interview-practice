@@ -6,9 +6,11 @@ const foo = (function() {
         return {
             bar: function () {
                 console.log('this is a public method')
+                privateMethod()
             },
             test: function (){
                 console.log('this is another public method')
+                privateMethod()
             }
         }
     }
