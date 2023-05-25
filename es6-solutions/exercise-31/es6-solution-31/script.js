@@ -1,22 +1,24 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const pElements = document.querySelectorAll('p');
 
-const p = document.getElementsByTagName('p')
+    for (let i = 1; i < pElements.length; i += 2) {
+        pElements[i].style.display = 'none';
+    }
 
-
-for (let i=0; i<p.length; i++) {
-    if(i%2 === 1) {
-        p[i].style.display = 'none'
-    } else {
-        p[i].addEventListener('click', () => {
-            if (p[i+1].style.display === 'none') {
-                p[i+1].style.display = 'block'
+    document.addEventListener('click', function(event) {
+        const target = event.target;
+        if (target.tagName === 'P') {
+            pElements.forEach(function(p) {
+                p.style.display = 'none';
+            });
+            const pos = Array.prototype.indexOf.call(pElements, target);
+            if (pos%2 === 0) {
+                pElements[pos+1].style.display = 'block';
             } else {
-                p[i+1].style.display = 'none'
-            }
-            for(let j=0; j<p.length; j++) {
-                if(j%2 ===1  && j !== i+1) {
-                    p[j].style.display = 'none'
+                for (let i = 0; i < pElements.length; i += 2) {
+                    pElements[i].style.display = 'block';
                 }
             }
-        });
-    }
-}
+        }
+    });
+});
