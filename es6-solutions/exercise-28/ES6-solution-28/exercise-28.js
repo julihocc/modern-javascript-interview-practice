@@ -3,14 +3,25 @@ async function getOne(url) {
   return await response.json();
 }
 
+// const _async = {
+//     getAll: async function (urlArray, callback){
+//         const output = await Promise.all(urlArray.map(async (url) => {
+//             return await getOne(url);
+//         }));
+//         return output.map(callback);
+//     }
+// }
 const _async = {
-    getAll: async function (urlArray, callback){
-        const output = await Promise.all(urlArray.map(async (url) => {
-            return await getOne(url);
-        }));
-        return output.map(callback);
+    getAll: async function(urlArray, callback) {
+        const output = await Promise.all(
+            urlArray.map(async url => {
+                const data = await getOne(url);
+                return callback(data);
+            })
+        );
+        return output;
     }
-}
+};
 
 // test 
 
