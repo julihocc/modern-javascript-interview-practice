@@ -36,3 +36,4 @@ console.log(fourOrMoreConsecutiveCharacters('asdfg'))
 console.log(fourOrMoreConsecutiveCharacters('1234567890'));
 console.log(fourOrMoreConsecutiveCharacters('qweasdzxc'))
 console.log(fourOrMoreConsecutiveCharacters('132374'))
+console.log(fourOrMoreConsecutiveCharacters('fdsa'))
