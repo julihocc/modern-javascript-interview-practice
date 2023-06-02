@@ -18,10 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
 
-                // Get all existing rows in the table, except the header row
                 const existingRows = table.querySelectorAll('tr:not(:first-child)');
 
-                // Remove all existing rows
                 existingRows.forEach(row => row.remove());
 
                 const template = document.querySelector('#candidateRow');
@@ -106,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .then(json => {
-                // Now that we've confirmed that the deletion was successful, we can update the table.
                 updateTable();
                 return json;
             })
