@@ -1,4 +1,3 @@
-const axios = require('axios');
 class Person {
     constructor(name, lastName) {
         this.name = name;
@@ -11,7 +10,11 @@ class Person {
 
     sendInfo() {
         console.log('Sending info...')
-        axios.get(`https://jsonplaceholder.typicode.com/users?name=${this.name}&lastName=${this.lastName}`)
+        const fullName = this.getFullName();
+        console.log('Full name: ', fullName);
+        const url = `https://jsonplaceholder.typicode.com/users?name=${fullName}`
+        console.log('URL: ', url);
+        fetch(url)
             .then(response => {
                 console.log('Response: ');
                 console.log('Data: ', response.data);
@@ -29,6 +32,6 @@ class Medic extends Person {
     }
 }
 
-let person = new Person("Jim", "Parsons");
+let person = new Person("Leanne", "Graham");
 console.log(person.getFullName());
 person.sendInfo();
