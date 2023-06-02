@@ -2,16 +2,14 @@ const testObj1 = {"a": 1, "b": 2, "c": 3, "e": 5}
 const testObj2 = {"a": 11, "b": 22, "d": 4, "e": 5}
 
 const difference = (obj1, obj2) => {
-    let prop1 = new Set(Object.getOwnPropertyNames(obj1))
-    let prop2 = new Set(Object.getOwnPropertyNames(obj2))
     let difference = new Set()
-    for (let prop of prop1) {
-        if (!prop2.has(prop) || obj1[prop] !== obj2[prop]) {
+    for (let prop in obj1) {
+        if (obj2[prop] === undefined || obj1[prop] !== obj2[prop]) {
             difference.add(prop)
         }
     }
-    for (let prop of prop2) {
-        if (!prop1.has(prop) || obj1[prop] !== obj2[prop]) {
+    for (let prop in obj2) {
+        if (obj1[prop] === undefined || obj1[prop] !== obj2[prop]) {
             difference.add(prop)
         }
     }
