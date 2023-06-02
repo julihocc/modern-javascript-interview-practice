@@ -26,7 +26,7 @@ function adjustTimestamp(initialDate, shiftMagnitude, shiftUnit) {
         modifiedDate.setTime(modifiedDate.getTime() + adjusterValue);
     }
     else {
-        console.log("Sorry, I didn't get that. Could you try with 'day', 'week', 'month', 'hour', 'minute', or 'second'?");
+        throw new Error("Sorry, I didn't get that. Could you try with 'day','week', 'month', 'hour', 'minute', or 'second'?");
         return;
     }
 
@@ -44,3 +44,5 @@ console.log("Two months from now it'll be: " + shiftedTimestamp);
 
 shiftedTimestamp = adjustTimestamp(currentTimestamp, 45, 'minutes');
 console.log("45 minutes later it'll be: " + shiftedTimestamp);
+
+shiftedTimestamp = adjustTimestamp(currentTimestamp, 1, 'century');
