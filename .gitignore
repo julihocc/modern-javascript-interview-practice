@@ -2,3 +2,4 @@
 .idea/*
 node_modules/
 *.draft.zip
+solution*.zip
