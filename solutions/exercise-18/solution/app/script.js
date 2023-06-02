@@ -1,41 +1,45 @@
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('#candidatesTable');
     const addLink = document.getElementById('addCandidate');
 
     function updateTable() {
+
+
         fetch('http://localhost:3000/users')
             .then(response => response.json())
             .then(data => {
                 table.innerHTML = `
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+                ${data.map(candidate => `
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Actions</th>
+                        <td contenteditable="true">${candidate.name}</td>
+                        <td contenteditable="true">${candidate.email}</td>
+                        <td contenteditable="true">${candidate.phone}</td>
+                        <td>
+                            <button class="save" data-id="${candidate.id}">Update</button>
+                            /
+                            <button  class="delete" data-id="${candidate.id}">Delete</button>
+                        </td>
                     </tr>
-                    ${data.map(candidate => `
-                        <tr>
-                            <td>${candidate.name}</td>
-                            <td>${candidate.email}</td>
-                            <td>${candidate.phone}</td>
-                            <td>
-                                <a href="#" class="edit" data-id="${candidate.id}">Edit</a>
-                                /
-                                <a href="#" class="delete" data-id="${candidate.id}">Delete</a>
-                            </td>
-                        </tr>
-                    `).join('')}
-                `;
+                `).join('')}
+            `;
             })
             .then(() => {
-                Array.from(document.querySelectorAll('.edit')).forEach(editLink => {
-                    editLink.addEventListener('click', (e) => {
+                Array.from(document.querySelectorAll('.save')).forEach(saveButton => {
+                    saveButton.addEventListener('click', (e) => {
                         e.preventDefault();
                         const id = e.target.dataset.id;
                         const row = e.target.closest('tr');
-                        const name = prompt('Enter the new name');
-                        const email = prompt('Enter the new email');
-                        const phone = prompt('Enter the new phone');
+                        const name = row.querySelector('td:nth-child(1)').textContent;
+                        const email = row.querySelector('td:nth-child(2)').textContent;
+                        const phone = row.querySelector('td:nth-child(3)').textContent;
                         if (name && email && phone) {
                             editCandidate(id, {name, email, phone}, row);
                         }
@@ -88,6 +92,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    function postCandidate(candidate) {
+        fetch('http://localhost:3000/users', {
+            method: 'POST', body: JSON.stringify(candidate), headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(() => {
+                updateTable();
+            });
+    }
+
+
     addLink.addEventListener('click', (e) => {
         e.preventDefault();
         const row = document.createElement('tr');
@@ -129,17 +146,5 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(row);
     });
 
-    function postCandidate(candidate) {
-        fetch('http://localhost:3000/users', {
-            method: 'POST', body: JSON.stringify(candidate), headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(() => {
-                updateTable();
-            });
-    }
-
-    updateTable();
+       updateTable();
 });
