@@ -1,38 +1,39 @@
+const API_BASE_URL = 'http://localhost:3000/users';
 
 
 document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('#candidatesTable');
     const addLink = document.getElementById('addCandidate');
 
+    function createInputCell() {
+        const cell = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        cell.appendChild(input);
+        return {cell, input};
+    }
+
     function updateTable() {
-
-
-        fetch('http://localhost:3000/users')
+        fetch(`${API_BASE_URL}`)
             .then(response => response.json())
             .then(data => {
-                table.innerHTML = `
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Actions</th>
-                </tr>
-                ${data.map(candidate => `
-                    <tr>
-                        <td contenteditable="true">${candidate.name}</td>
-                        <td contenteditable="true">${candidate.email}</td>
-                        <td contenteditable="true">${candidate.phone}</td>
-                        <td>
-                            <button class="save" data-id="${candidate.id}">Update</button>
-                            /
-                            <button  class="delete" data-id="${candidate.id}">Delete</button>
-                        </td>
-                    </tr>
-                `).join('')}
-            `;
-            })
-            .then(() => {
-                Array.from(document.querySelectorAll('.save')).forEach(saveButton => {
+
+                // Get all existing rows in the table, except the header row
+                const existingRows = table.querySelectorAll('tr:not(:first-child)');
+
+                // Remove all existing rows
+                existingRows.forEach(row => row.remove());
+
+                const template = document.querySelector('#candidateRow');
+                data.forEach(candidate => {
+                    const clone = document.importNode(template.content, true);
+                    const td = clone.querySelectorAll('td');
+                    td[0].textContent = candidate.name;
+                    td[1].textContent = candidate.email;
+                    td[2].textContent = candidate.phone;
+
+                    const saveButton = clone.querySelector('.save');
+                    saveButton.dataset.id = candidate.id;
                     saveButton.addEventListener('click', (e) => {
                         e.preventDefault();
                         const id = e.target.dataset.id;
@@ -44,22 +45,28 @@ document.addEventListener('DOMContentLoaded', () => {
                             editCandidate(id, {name, email, phone}, row);
                         }
                     });
-                });
 
-                Array.from(document.querySelectorAll('.delete')).forEach(deleteLink => {
-                    deleteLink.addEventListener('click', (e) => {
+                    const deleteButton = clone.querySelector('.delete');
+                    deleteButton.dataset.id = candidate.id;
+                    deleteButton.addEventListener('click', (e) => {
                         e.preventDefault();
                         const id = e.target.dataset.id;
                         if (confirm('Are you sure you want to delete this candidate?')) {
-                            deleteCandidate(id);
+                            deleteCandidate(id)
+                                .then(() => {
+                                    updateTable();
+                                });
                         }
                     });
+
+                    table.appendChild(clone);
                 });
-            });
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function editCandidate(id, candidate, row) {
-        fetch(`http://localhost:3000/users/${id}`, {
+        fetch(`${API_BASE_URL}/${id}`, {
             method: 'PUT', body: JSON.stringify(candidate), headers: {
                 'Content-Type': 'application/json'
             }
@@ -72,71 +79,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             })
             .then(updatedCandidate => {
-                // const row = document.querySelector(`tr[data-id="${updatedCandidate.id}"]`);
                 if (row) {
                     row.querySelector('td:nth-child(1)').textContent = updatedCandidate.name;
                     row.querySelector('td:nth-child(2)').textContent = updatedCandidate.email;
                     row.querySelector('td:nth-child(3)').textContent = updatedCandidate.phone;
                 }
+                return updatedCandidate;
+            })
+            .then((updatedCandidate) => {
+                updateTable();
+                return updatedCandidate;
             })
             .catch(error => console.log(error));
     }
 
+
     function deleteCandidate(id) {
-        fetch(`http://localhost:3000/users/${id}`, {
+        return fetch(`${API_BASE_URL}/${id}`, {
             method: 'DELETE',
         })
-            .then(response => response.json())
-            .then(() => {
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                } else {
+                    return response.json();
+                }
+            })
+            .then(json => {
+                // Now that we've confirmed that the deletion was successful, we can update the table.
                 updateTable();
-            });
+                return json;
+            })
+            .catch(error => console.error('Error:', error));
     }
 
+
     function postCandidate(candidate) {
-        fetch('http://localhost:3000/users', {
-            method: 'POST', body: JSON.stringify(candidate), headers: {
+        return fetch(`${API_BASE_URL}`, {
+            method: 'POST',
+            body: JSON.stringify(candidate),
+            headers: {
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => response.json())
-            .then(() => {
-                updateTable();
-            });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                } else {
+                    return response.json();
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
-
 
     addLink.addEventListener('click', (e) => {
         e.preventDefault();
         const row = document.createElement('tr');
 
-        const nameCell = document.createElement('td');
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameCell.appendChild(nameInput);
-
-        const emailCell = document.createElement('td');
-        const emailInput = document.createElement('input');
-        emailInput.type = 'text';
-        emailCell.appendChild(emailInput);
-
-        const phoneCell = document.createElement('td');
-        const phoneInput = document.createElement('input');
-        phoneInput.type = 'text';
-        phoneCell.appendChild(phoneInput);
+        const {cell: nameCell, input: nameInput} = createInputCell();
+        const {cell: emailCell, input: emailInput} = createInputCell();
+        const {cell: phoneCell, input: phoneInput} = createInputCell();
 
         const actionCell = document.createElement('td');
         const saveButton = document.createElement('button');
         saveButton.innerText = 'Save';
+
+        const cancelButton = document.createElement('button');
+        cancelButton.innerText = 'Cancel';
+        cancelButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            row.remove();
+        });
+
         saveButton.addEventListener('click', (e) => {
             e.preventDefault();
             postCandidate({
                 name: nameInput.value,
                 email: emailInput.value,
                 phone: phoneInput.value
+            }).then(() => {
+                row.remove();
+                updateTable();
             });
-            row.remove();  // remove row after saving
         });
+
         actionCell.appendChild(saveButton);
+        actionCell.appendChild(cancelButton);
 
         row.appendChild(nameCell);
         row.appendChild(emailCell);
