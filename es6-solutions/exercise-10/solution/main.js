@@ -9,15 +9,14 @@ class Person {
     }
 
     sendInfo() {
-        console.log('Sending info...')
         const fullName = this.getFullName();
-        console.log('Full name: ', fullName);
-        const url = `https://jsonplaceholder.typicode.com/users?name=${fullName}`
-        console.log('URL: ', url);
+        const url = new URL('https://jsonplaceholder.typicode.com/users');
+        url.searchParams.append('name', fullName);
         fetch(url)
-            .then(response => {
-                console.log('Response: ');
-                console.log('Data: ', response.data);
+            .then(response => response.json())
+            .then(data => {
+                const filteredData = data.filter(user => user.name === fullName);
+                console.log('Filtered Data: ', filteredData);
             })
             .catch(error => {
                 console.log('There was an error: ', error);
