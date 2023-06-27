@@ -27,7 +27,6 @@ function adjustTimestamp(initialDate, shiftMagnitude, shiftUnit) {
     }
     else {
         throw new Error("Sorry, I didn't get that. Could you try with 'day','week', 'month', 'hour', 'minute', or 'second'?");
-        return;
     }
 
     return modifiedDate;
