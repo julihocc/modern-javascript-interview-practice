@@ -1,63 +1,41 @@
-const async = {
-    getAll: (tasks, callback) => {
-        let completedTasks = 0;
-        const results = {};
-
-        tasks.forEach((task, index) => {
-            task((error, result) => {
-                if (error) {
-                    console.error('Error:', error);
-                    results[index + 1] = null;
-                } else {
-                    results[index + 1] = result;
-                }
-
-                completedTasks++;
-
-                if (completedTasks === tasks.length) {
-                    callback(results);
-                }
+var async = {
+    getAll: function (ajaxCalls, callback) {
+        var placeholders = ajaxCalls.map(function(ajaxCall) {
+            return new Promise(function(keep, throwAway) {
+                ajaxCall(function(error, data) {
+                    if (error) {
+                        throwAway(error);
+                    } else {
+                        keep(data);
+                    }
+                });
             });
         });
+
+        Promise.all(placeholders)
+            .then(function(allData) {
+                var collectedData = {};
+                allData.forEach(function(data, index) {
+                    collectedData[index + 1] = data;
+                });
+                callback.call(collectedData);
+            })
+            .catch(function(error) {
+                console.error("Oops, something went wrong:", error);
+            });
     }
 };
 
-const axCall1 = (callback) => {
-    fetch('https://jsonplaceholder.typicode.com/posts/1')
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Network response was not OK');
-            }
-        })
-        .then(data => {
-            callback(null, data);
-        })
-        .catch(error => {
-            callback(error, null);
-        });
+var getData1 = function(callback) {
+    setTimeout(function() { callback(null, "Got data 1"); }, 1000);
 };
 
-const axCall2 = (callback) => {
-    fetch('https://jsonplaceholder.typicode.com/posts/2')
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Network response was not OK');
-            }
-        })
-        .then(data => {
-            callback(null, data);
-        })
-        .catch(error => {
-            callback(error, null);
-        });
+var getData2 = function(callback) {
+    setTimeout(function() { callback(null, "Got data 2"); }, 2000);
 };
 
-const callback = (results) => {
-    console.log('Callback context:', results);
+var doSomethingWithResults = function() {
+    console.log(this);
 };
 
-async.getAll([axCall1, axCall2], callback);
+async.getAll([getData1, getData2], doSomethingWithResults);
