@@ -14,6 +14,24 @@
 <p>I will be hidden or visible 3</p>
 <p>Toggle 4</p>
 <p>I will be hidden or visible 4</p>
-<script src="./script.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const pElements = document.querySelectorAll('p');
+
+        for (let i = 1; i < pElements.length; i += 2) {
+            pElements[i].style.display = 'none';
+        }
+
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+            if (target.matches('p:nth-child(odd)')) {
+                const nextP = target.nextElementSibling;
+                if (nextP && nextP.tagName === 'P') {
+                    nextP.style.display = (nextP.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
