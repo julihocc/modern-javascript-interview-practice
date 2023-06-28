@@ -1,6 +1,5 @@
+// script.js
 const API_BASE_URL = 'http://localhost:3000/users';
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const table = document.querySelector('#candidatesTable');
     const addLink = document.getElementById('addCandidate');
@@ -17,9 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(`${API_BASE_URL}`)
             .then(response => response.json())
             .then(data => {
-
                 const existingRows = table.querySelectorAll('tr:not(:first-child)');
-
                 existingRows.forEach(row => row.remove());
 
                 const template = document.querySelector('#candidateRow');
@@ -30,17 +27,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     td[1].textContent = candidate.email;
                     td[2].textContent = candidate.phone;
 
+                    // Make cells not editable initially
+                    td.forEach(cell => cell.contentEditable = "false");
+
                     const saveButton = clone.querySelector('.save');
+                    saveButton.dataset.editing = "false";
                     saveButton.dataset.id = candidate.id;
+                    saveButton.innerText = "Edit";
                     saveButton.addEventListener('click', (e) => {
                         e.preventDefault();
                         const id = e.target.dataset.id;
                         const row = e.target.closest('tr');
-                        const name = row.querySelector('td:nth-child(1)').textContent;
-                        const email = row.querySelector('td:nth-child(2)').textContent;
-                        const phone = row.querySelector('td:nth-child(3)').textContent;
-                        if (name && email && phone) {
-                            editCandidate(id, {name, email, phone}, row);
+
+                        if (saveButton.dataset.editing === "false") {
+                            // Make row editable
+                            saveButton.dataset.editing = "true";
+                            saveButton.innerText = "Save";
+                            const cells = row.querySelectorAll('td');
+                            cells.forEach(cell => {
+                                if(cell !== cells[cells.length - 1]) {
+                                    cell.contentEditable = "true";
+                                }
+                            });
+                        } else {
+                            // Save changes and make row non-editable
+                            saveButton.dataset.editing = "false";
+                            saveButton.innerText = "Edit";
+                            const name = row.querySelector('td:nth-child(1)').textContent;
+                            const email = row.querySelector('td:nth-child(2)').textContent;
+                            const phone = row.querySelector('td:nth-child(3)').textContent;
+                            const cells = row.querySelectorAll('td');
+                            cells.forEach(cell => {
+                                if(cell !== cells[cells.length - 1]) {
+                                    cell.contentEditable = "false";
+                                }
+                            });
+
+                            if (name && email && phone) {
+                                editCandidate(id, {name, email, phone}, row);
+                            }
                         }
                     });
 
@@ -62,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(error => console.error('Error:', error));
     }
-
     function editCandidate(id, candidate, row) {
         fetch(`${API_BASE_URL}/${id}`, {
             method: 'PUT', body: JSON.stringify(candidate), headers: {
