@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- Paragraphs acting as toggle buttons -->
 <p>Toggle 1</p>
+<!-- Content paragraphs that will be toggled -->
 <p>I will be hidden or visible 1</p>
 <p>Toggle 2</p>
 <p>I will be hidden or visible 2</p>
@@ -14,29 +16,6 @@
 <p>I will be hidden or visible 3</p>
 <p>Toggle 4</p>
 <p>I will be hidden or visible 4</p>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const pElements = document.querySelectorAll('p');
-
-        for (let i = 1; i < pElements.length; i += 2) {
-            pElements[i].style.display = 'none';
-        }
-
-        document.addEventListener('click', function(event) {
-            const target = event.target;
-            const index = Array.from(pElements).indexOf(target);
-            if (index % 2 === 0) {
-                for (let i = 1; i < pElements.length; i += 2) {
-                    pElements[i].style.display = 'none';
-                }
-
-                const nextP = target.nextElementSibling;
-                if (nextP && nextP.tagName === 'P') {
-                    nextP.style.display = 'block';
-                }
-            }
-        });
-    });
-</script>
+<script src="script.js"></script>
 </body>
 </html>
